@@ -1,0 +1,80 @@
+/*
+Autor: Carlos Eduardo da Silva Lima 
+Tema: Sistema Massa-Mola resolução com o método de Runge-Kutta para sistema de EDO´s de primeira ordem 4x4.
+Data: 31/03/2021
+*/
+// Entre com os dados via teclado
+k1 = input("Entre com k1: ");
+k2 = input("Entre com k2: ");
+k3 = input("Entre com k3: ");
+m1 = input("Entre com m1: ");
+m2 = input("Entre com m2: ");
+//wc = input("Entre com o coeficiente de atrito: ");
+//g  = input("Entre com o valor da gravidade: ");
+//Edo´s
+function [y1] = f1(t,x1,x2,u1,u2)
+    y1 = u1;
+endfunction
+function [y2] = f2(t,x1,x2,u1,u2)
+    y2 = u2;
+endfunction
+function [y3] = f3(t,x1,x2,u1,u2)
+    y3 = ((-(k1 + k2)*x1 + k2*x2)/m1);
+endfunction
+function [y4] = f4(t,x1,x2,u1,u2)
+    y4 = ((k2*x1 - (k2+k3)*x2)/m1);
+endfunction
+// Condições iniciais
+t0  = input("Entre com t0: ");
+x10 = input("Entre com x1(t0): ");
+x20 = input("Entre com x2(t0): ");
+v10 = input("Entre com v10(t0): ");
+v20 = input("Entre com v20(t0): ");
+h   = input("Entre com o passo h: ");
+N0  = input("Entre com o numero de iterações N: ");
+// Inicialização para o loop
+t  = t0;
+x1 = x10;
+x2 = x20;
+x3 = v10;
+x4 = v20;
+for i = 0:0.1:N0
+    k11 = h*f1(t,x1,x2,x3,x4)
+    k12 = h*f2(t,x1,x2,x3,x4)
+    k13 = h*f3(t,x1,x2,x3,x4)
+    k14 = h*f4(t,x1,x2,x3,x4)
+    k21 = h*f1((t+(h/2)),(x1+(k11/2)),(x2+(k12/2)),(x3+(k13/2)),(x4+(k14/2)))
+    k22 = h*f2((t+(h/2)),(x1+(k11/2)),(x2+(k12/2)),(x3+(k13/2)),(x4+(k14/2)))
+    k23 = h*f3((t+(h/2)),(x1+(k11/2)),(x2+(k12/2)),(x3+(k13/2)),(x4+(k14/2)))
+    k24 = h*f4((t+(h/2)),(x1+(k11/2)),(x2+(k12/2)),(x3+(k13/2)),(x4+(k14/2)))
+    k31 = h*f1((t+(h/2)),(x1+(k21/2)),(x2+(k22/2)),(x3+(k23/2)),(x4+(k24/2)))
+    k32 = h*f2((t+(h/2)),(x1+(k21/2)),(x2+(k22/2)),(x3+(k23/2)),(x4+(k24/2)))
+    k33 = h*f3((t+(h/2)),(x1+(k21/2)),(x2+(k22/2)),(x3+(k23/2)),(x4+(k24/2)))
+    k34 = h*f4((t+(h/2)),(x1+(k21/2)),(x2+(k22/2)),(x3+(k23/2)),(x4+(k24/2)))
+    k41 = h*f1((t+h),(x1+k31),(x2+k32),(x3+k33),(x4+k34))
+    k42 = h*f2((t+h),(x1+k31),(x2+k32),(x3+k33),(x4+k34))
+    k43 = h*f3((t+h),(x1+k31),(x2+k32),(x3+k33),(x4+k34))
+    k44 = h*f4((t+h),(x1+k31),(x2+k32),(x3+k33),(x4+k34))
+    x1 = x1 + ((k11 + 2*k21 + 2*k31 + k41)/6)
+    x2 = x2 + ((k12 + 2*k22 + 2*k32 + k42)/6)
+    x3 = x3 + ((k13 + 2*k23 + 2*k33 + k43)/6)
+    x4 = x4 + ((k14 + 2*k24 + 2*k34 + k44)/6)
+    t = t + h
+    // **** Energia ****
+    // Energia Potencial e Cinética
+    V = (1/2)*(k1*(x1*x1) + k2*((x2-x1)*(x2-x1)) + k3*(x2*x2));
+    K = (1/2)*(m1*(x3*x3) + m2*(x4*x4));
+    // Energia Total -> E = V + K
+    E = K + V;
+    // Saida dos resultados via tela - promp
+    // Obs!, u1  = v1 e u2 = v2
+    printf("t = %f || x1 = %f || x2 = %f || v1 = %f || v2 = %f || E = %f\n",t,x1,x2,x3,x4,E);
+   //Gráfico
+   //plot(t,x1,'-*', t, x2, '-+', t, x3, '-x',t, x4, '-o')
+   //xtitle("Gráfico: x1(Azul), x2(Verde), v1(vermelho) e v2(Azul claro)");
+   //xgrid(0.05);
+   //Gráfico
+   plot(t, E, '-*',t,K,'-X',t,V,'-O')
+   xtitle("Gráfico: Energia total, Engergia Cinética e Energia Potencial");
+   xgrid(0.05);
+end
