@@ -1,0 +1,98 @@
+/************************************************************
+Pêndulo Duplo em Scilab
+*************************************************************/
+/*
+Autor: Carlos Eduardo da Silva Lima 
+Diciplina: Física Computacional
+Data: 31/05/2021
+*/
+//Atributos do pêndulo Duplo
+m1 = 2
+m2 = 2
+l1 = 1
+l2 = 1
+g = 9.81
+//EDO´S
+// Priemira EDO
+function [j1] = f1(t,x1,x2,w1,w2)
+    j1 = w1
+endfunction
+// Segunda EDO
+function [j2] = f2(t,x1,x2,w1,w2)
+    j2 = w2
+endfunction
+// Terceira EDO
+function [j3] = f3(t,x1,x2,w1,w2)
+    j3 = ((-g*(2*m1+m2)*sin(x1)-m2*g*sin(x1-2*x2)-2*sin(x1-x2)*m2*(w2^2*l2 + w1^2*l1*cos(x1-x2)))/(l1*(2*m1+m2-m2*cos(2*x1-2*x2))))
+endfunction
+//Quarta EDO
+function [j4] = f4(t,x1,x2,w1,w2)
+    j4 = ((2*sin(x1-x2)*(w1^2*l1*(m1+m2)+g*(m1+m2)*cos(x1) + w2^2*l2*m2*cos(x1-x2)))/(l2*(2*m1+m2-m2*cos(2*x1-2*x2))))
+endfunction
+// Dados de entrada - Condições iniciais
+a1  = 0; // ângulo em graus
+a2  = 0; // ângulo em graus
+t0  = 0;
+x10 = (%pi/180)*a1;
+x20 = (%pi/180)*a2;
+w10 = 0;
+w20 = 0;
+//Novas variáveis, inicializando-as.
+t  = t0;
+x1 = x10;
+x2 = x20;
+x3 = w10;
+x4 = 1;
+// Atributos (Parâmetros) para o algoritimo de Runge-Kutta de 4Ordem
+h = 0.01;
+N = 2000; // quantidade de iterações
+// Algoritmo de Runge-Kutta de 4Ordem
+for i = 0:0.01:N
+    k11 = h*f1(t,x1,x2,x3,x4)
+    k12 = h*f2(t,x1,x2,x3,x4)
+    k13 = h*f3(t,x1,x2,x3,x4)
+    k14 = h*f4(t,x1,x2,x3,x4)
+    k21 = h*f1((t+(h/2)),(x1+(k11/2)),(x2+(k12/2)),(x3+(k13/2)),(x4+(k14/2)))
+    k22 = h*f2((t+(h/2)),(x1+(k11/2)),(x2+(k12/2)),(x3+(k13/2)),(x4+(k14/2)))
+    k23 = h*f3((t+(h/2)),(x1+(k11/2)),(x2+(k12/2)),(x3+(k13/2)),(x4+(k14/2)))
+    k24 = h*f4((t+(h/2)),(x1+(k11/2)),(x2+(k12/2)),(x3+(k13/2)),(x4+(k14/2)))
+    k31 = h*f1((t+(h/2)),(x1+(k21/2)),(x2+(k22/2)),(x3+(k23/2)),(x4+(k24/2)))
+    k32 = h*f2((t+(h/2)),(x1+(k21/2)),(x2+(k22/2)),(x3+(k23/2)),(x4+(k24/2)))
+    k33 = h*f3((t+(h/2)),(x1+(k21/2)),(x2+(k22/2)),(x3+(k23/2)),(x4+(k24/2)))
+    k34 = h*f4((t+(h/2)),(x1+(k21/2)),(x2+(k22/2)),(x3+(k23/2)),(x4+(k24/2)))
+    k41 = h*f1((t+h),(x1+k31),(x2+k32),(x3+k33),(x4+k34))
+    k42 = h*f2((t+h),(x1+k31),(x2+k32),(x3+k33),(x4+k34))
+    k43 = h*f3((t+h),(x1+k31),(x2+k32),(x3+k33),(x4+k34))
+    k44 = h*f4((t+h),(x1+k31),(x2+k32),(x3+k33),(x4+k34))
+    x1 = x1 + ((k11 + 2*k21 + 2*k31 + k41)/6)
+    x2 = x2 + ((k12 + 2*k22 + 2*k32 + k42)/6)
+    x3 = x3 + ((k13 + 2*k23 + 2*k33 + k43)/6)
+    x4 = x4 + ((k14 + 2*k24 + 2*k34 + k44)/6)
+    t = t + h
+   //Saída
+   printf("t = %f || teta1 = %f || teta2 = %f || w1 = %f || w2 = %f\n",t,x1,x2,x3,x4);
+   //Gráfico
+   //plot(t,x1,'-o',t,x2,'-o')
+   //plot(t,x3,'-o',t,x4,'-o')
+   //plot(t,x1,'-o',t,x2,'-o')
+   plot(x1,x2,'-o')
+   //plot(x1,x3,'-o',x2,x4,'-o')
+   //xtitle("Gráfico da Solução Pêndulo Duplo via Runge-Kutta de Quarta Ordem");
+   xgrid(0.05);
+                // **************** Energia ****************
+   // Primeira Massa
+   K1 = (1/2)*m1*l1*l1*x3*x3; // energia cinética 
+   V1 = -m1*g*l1*cos(x1); // energia potencial
+   E1 =K1+V1; // energia mecânica, cinetica  + potêncial
+   // Segunda Massa
+   K2 = (1/2)*m2*(l1*l1*x3*x4 + l2*l2*x4*x4 + 2*l1*l2*cos(x1-x2)*x3*x4);
+   V2 = -m2*g*(l1*cos(x1) + l2*cos(x2));
+   E2 =K2+V2; 
+   //Saída
+   //printf("t = %f || K1 = %f || V1 = %f || E1 = %f\n",t,K1,V1,E1);
+   //printf("t = %f || K2 = %f || V2 = %f || E2 = %f\n",t,K2,V2,E2);
+   //Gráfico
+   //plot(t,K1,'-o',t,V1,'-x',t,E1,'-*')
+   //xtitle("Energia cinética, potencial e mecãnica tolta para m1");
+   //xgrid(0.05);
+end
