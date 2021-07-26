@@ -1,0 +1,106 @@
+/*
+Universidade Federal de Goiás (UFG)
+Autor: Carlos Eduardo da Silva Lima
+Tema: Sistemas Caoticos
+Diciplina: Física Computacional
+Titulo: Mapa de Ikeda 
+Linguagem: C++ 
+IDE: Falcom C++
+*/
+//Inclussão de arquivos de cabeçalho
+#include <iostream>
+#include <cmath>
+#include <tchar.h>
+#include <fstream>
+// Macros
+#define A   0.4
+#define B   6.0
+#define u0  0.65
+//Classe 
+class MapaIkeda
+{
+ public:
+ void mapaIkeda(int N, double s[])
+ {
+ // Variáveis
+ double t[N];
+ double x[N];
+ double y[N];
+ double u[N];
+ // Inicialização
+ x[0] = s[0];
+ y[0] = s[1];
+ u[0] =  u0;
+ // Parâmetro u
+ for(int i = 0; i<(N-1); i++)
+ {
+ u[i+1]  = u[i] + 5*pow(10,-6);
+ //std::cout << u[i] << std::endl;
+ }
+ for(int i = 0; i<(N-1); i++)
+ {
+ if(u[i]>=0.6)
+ {
+ t[i] = A - (B/(1 + pow(x[i],2) + pow(y[i],2)));
+ x[i+1] = 1 + u[i]*(x[i]*cos(t[i]) - y[i]*sin(t[i]));
+ y[i+1] = u[i]*(x[i]*sin(t[i]) + y[i]*cos(t[i]));
+ }
+ else if(u[i]<0.6)
+ {
+ std::cout << "Insira um u0 >= 0.6! " << std::endl;
+ break;
+ }
+ }
+ //Saída
+ // Parâmetro u
+ for(int i = 0; i<(N-1); i++)
+ {
+ std::cout << "t = " << t[i] << " || x = " << x[i] << " || y = " << y[i] << std::endl;
+ }
+ // Arquivo .txt 
+ std::ofstream saidaPD;
+ //
+ saidaPD.open("MapaIkeda.txt",std::ios::app);
+ //Saída em um arquivo .txt
+ for(int i = 0; i<(N-1); i++)
+ {
+ saidaPD <<x[i]<<"   "<<y[i]<<std::endl;
+ }
+ }// mapaIkeda
+/*
+https://codepen.io/ZevanRosser/pen/xbzBWG?editors=0000
+https://en.wikipedia.org/wiki/Ikeda_map...
+https://codepen.io/ZevanRosser/pen/xbzBWG?editors=0000
+*/ 
+};
+**********************************************************************************************************************************************
+/*
+Universidade Federal de Goiás (UFG)
+Autor: Carlos Eduardo da Silva Lima
+Tema: Fractal
+Diciplina: Física Computacional
+Livro: Sistemas Dinâmicos Villate página 164 exercício 11.1
+Linguagem: C++ 
+IDE: Falcom C++
+*/
+//Inclussão de arquivos de cabeçalho
+#include <iostream>
+#include <cmath>
+#include <tchar.h>
+#include <fstream>
+#include "MapaIkeda.h"
+int main()
+{
+ // Permite acentuação para o idioma português
+ _tsetlocale(LC_ALL, _T("portuguese"));
+ // Apresentação
+ std::cout<<"\t\t**** Mapa da Ikeda ****" << std::endl;
+ // Parâmetros
+ int N = 50000;
+ double s[] = {0,0};
+ //Objeto
+ MapaIkeda sol;
+ //Chamada de método
+ sol.mapaIkeda(N,s);
+    return 0;       
+}
