@@ -1,0 +1,164 @@
+/*
+Autor: Carlos Eduardo da Silva Lima
+Tema: Sistema 2 Massa 2 Molas
+Linguagem: C++
+Data: 06/07/2021
+Arquivo fonte: arquivo.h
+*/
+//Inclussão de arquivos de cabeçalho
+#include <iostream>
+#include <fstream>
+#include <cmath>
+ // Atributos o sistema 3 massa 3 molas - Constantes do sistema
+#define m1  10 //Kg
+#define m2  5 //Kg
+#define m3  1000 //Kg
+#define k1  100 //N/m
+#define k2  150 //N/m
+#define k3  200 //N/m
+#define k4  250 //N/m
+class Sistema3Massa3Molas
+{
+public:
+ // EDO´s, abaixo nas expressões para as funções
+    double f1(double t, double x1, double x2, double x3, double v1, double v2, double v3)
+    {
+        return(v1);
+    }
+    double f2(double t, double x1, double x2, double x3, double v1, double v2, double v3)
+    {
+        return(v2);
+    }
+    double f3(double t, double x1, double x2, double x3, double v1, double v2, double v3)
+    {
+        return(v3);
+    }
+    double f4(double t, double x1, double x2, double x3, double v1, double v2, double v3)
+    {
+        return((-k1*x1 + k2*(x2-x1) + k4*(x3-x1))/m1);
+    }
+    double f5(double t, double x1, double x2, double x3, double v1, double v2, double v3)
+    {
+        return((-k2*(x2-x1) - k3*x2)/m2);
+    }
+    double f6(double t, double x1, double x2, double x3, double v1, double v2, double v3)
+    {
+        return(-k4*(x3-x1)/m3);
+    }
+    // Energia Cinética
+ double T(double t, double x1, double x2, double x3, double v1, double v2, double v3)
+ {
+ return((m1*v1*v1/2) + (m2*v2*v2/2) + (m3*v3*v3/2) );
+ }
+ // Energia Potencial
+ double U(double t, double x1, double x2, double x3, double v1, double v2, double v3)
+ {
+ return((k1*pow(x1,2)/2) + (k2*pow((x2-x1),2)/2) + (k3*pow(x3,2)/2) + (k4*pow((x3-x1),2)/2));
+ }
+ // Energia total - Hamiltoniana
+ double E(double t, double x1, double x2, double x3, double v1, double v2, double v3)
+ {
+ return(T(t,x1,x2,x3,v1,v2,v3) + U(t,x1,x2,x3,v1,v2,v3));
+ }
+ //Sistema 3Massa e 3Molas
+ void sistema3Massa3Molas(double s[], int N)
+ {
+ // Varáveis
+ double  t[N]; // t
+ double x1[N]; // x1
+ double x2[N]; // x2
+ double x3[N]; // x3
+ double x4[N]; // v1
+ double x5[N]; // v2 
+ double x6[N]; // v3
+ // Valores iniciais
+  t[0] = s[0]; // t0
+ x1[0] = s[1]; // x1(t0)
+ x2[0] = s[2]; // x2(t0)
+ x3[0] = s[3]; // x3(t0)
+ x4[0] = s[4]; // v1(t0)
+ x5[0] = s[5]; // v2(t0)
+ x6[0] = s[6]; // v3(t0)
+   //Parâmetro para o método de Runge-Kutta de 4Ordem e tolerância
+   double h   = s[7];
+   double tol = s[8]; // tolerância
+ // Runge-Kutta 4Ordem
+ for(int i = 0; i<(N-1); i++)
+ {
+ double k11 = h*f1(t[i],x1[i],x2[i],x3[i],x4[i],x5[i],x6[i]);
+ double k12 = h*f2(t[i],x1[i],x2[i],x3[i],x4[i],x5[i],x6[i]);
+ double k13 = h*f3(t[i],x1[i],x2[i],x3[i],x4[i],x5[i],x6[i]);
+ double k14 = h*f4(t[i],x1[i],x2[i],x3[i],x4[i],x5[i],x6[i]);
+ double k15 = h*f5(t[i],x1[i],x2[i],x3[i],x4[i],x5[i],x6[i]);
+ double k16 = h*f6(t[i],x1[i],x2[i],x3[i],x4[i],x5[i],x6[i]);
+ double k21 = h*f1(t[i]+(h/2),x1[i]+(k11/2),x2[i]+(k12/2),x3[i]+(k13/2),x4[i]+(k14/2),x5[i]+(k15/2),x6[i]+(k16/2));
+ double k22 = h*f2(t[i]+(h/2),x1[i]+(k11/2),x2[i]+(k12/2),x3[i]+(k13/2),x4[i]+(k14/2),x5[i]+(k15/2),x6[i]+(k16/2));
+ double k23 = h*f3(t[i]+(h/2),x1[i]+(k11/2),x2[i]+(k12/2),x3[i]+(k13/2),x4[i]+(k14/2),x5[i]+(k15/2),x6[i]+(k16/2));
+ double k24 = h*f4(t[i]+(h/2),x1[i]+(k11/2),x2[i]+(k12/2),x3[i]+(k13/2),x4[i]+(k14/2),x5[i]+(k15/2),x6[i]+(k16/2));
+ double k25 = h*f5(t[i]+(h/2),x1[i]+(k11/2),x2[i]+(k12/2),x3[i]+(k13/2),x4[i]+(k14/2),x5[i]+(k15/2),x6[i]+(k16/2));
+ double k26 = h*f6(t[i]+(h/2),x1[i]+(k11/2),x2[i]+(k12/2),x3[i]+(k13/2),x4[i]+(k14/2),x5[i]+(k15/2),x6[i]+(k16/2));
+ double k31 = h*f1(t[i]+(h/2),x1[i]+(k21/2),x2[i]+(k22/2),x3[i]+(k23/2),x4[i]+(k24/2),x5[i]+(k25/2),x6[i]+(k26/2));
+ double k32 = h*f2(t[i]+(h/2),x1[i]+(k21/2),x2[i]+(k22/2),x3[i]+(k23/2),x4[i]+(k24/2),x5[i]+(k25/2),x6[i]+(k26/2));
+ double k33 = h*f3(t[i]+(h/2),x1[i]+(k21/2),x2[i]+(k22/2),x3[i]+(k23/2),x4[i]+(k24/2),x5[i]+(k25/2),x6[i]+(k26/2));
+ double k34 = h*f4(t[i]+(h/2),x1[i]+(k21/2),x2[i]+(k22/2),x3[i]+(k23/2),x4[i]+(k24/2),x5[i]+(k25/2),x6[i]+(k26/2));
+ double k35 = h*f5(t[i]+(h/2),x1[i]+(k21/2),x2[i]+(k22/2),x3[i]+(k23/2),x4[i]+(k24/2),x5[i]+(k25/2),x6[i]+(k26/2));
+ double k36 = h*f6(t[i]+(h/2),x1[i]+(k21/2),x2[i]+(k22/2),x3[i]+(k23/2),x4[i]+(k24/2),x5[i]+(k25/2),x6[i]+(k26/2));
+ double k41 = h*f1(t[i]+h,x1[i]+k31,x2[i]+k32,x3[i]+k33,x4[i]+k34,x5[i]+k35,x6[i]+k36);
+ double k42 = h*f2(t[i]+h,x1[i]+k31,x2[i]+k32,x3[i]+k33,x4[i]+k34,x5[i]+k35,x6[i]+k36);
+ double k43 = h*f3(t[i]+h,x1[i]+k31,x2[i]+k32,x3[i]+k33,x4[i]+k34,x5[i]+k35,x6[i]+k36);
+ double k44 = h*f4(t[i]+h,x1[i]+k31,x2[i]+k32,x3[i]+k33,x4[i]+k34,x5[i]+k35,x6[i]+k36);
+ double k45 = h*f5(t[i]+h,x1[i]+k31,x2[i]+k32,x3[i]+k33,x4[i]+k34,x5[i]+k35,x6[i]+k36);
+ double k46 = h*f6(t[i]+h,x1[i]+k31,x2[i]+k32,x3[i]+k33,x4[i]+k34,x5[i]+k35,x6[i]+k36);
+ x1[i+1] = x1[i] + ((k11 + 2*(k21 + k31) + k41)/6); // posição x1
+ x2[i+1] = x2[i] + ((k12 + 2*(k22 + k32) + k42)/6); // posição x2
+ x3[i+1] = x3[i] + ((k13 + 2*(k23 + k33) + k43)/6); // posição x3
+ x4[i+1] = x4[i] + ((k14 + 2*(k24 + k34) + k44)/6); // posição v1
+ x5[i+1] = x5[i] + ((k15 + 2*(k25 + k35) + k45)/6); // posição v2
+ x6[i+1] = x6[i] + ((k16 + 2*(k26 + k36) + k46)/6); // posição v3
+      t[i+1] =  t[i] + h;      //  tempo
+ }// fim do loop for 1
+ //Saída 
+ for(int i = 0; i<(N-1); i++)
+ {
+ std::cout << "x1["<<i<<"] = " << x1[i] << " || x2["<<i<<"] = " << x2[i] << " || x3["<<i<<"] = " << x3[i] << " || v1["<<i<<"] = " << x4[i] << " || v2["<<i<<"] = " << x5[i] << " || v3["<<i<<"] = " << x6[i];
+ std::cout << " || E = " << E(t[i],x1[i],x2[i],x3[i],x4[i],x5[i],x6[i]) << std::endl; 
+ }
+ // Arquivo .txt 
+ std::ofstream saidaPD;
+ //
+ saidaPD.open("Sistema3Massa3Molas.txt",std::ios::app);
+ //Saída em um arquivo .txt
+ for(int i = 0; i<(N-1); i++)
+ {
+ saidaPD<< t[i] <<"   "<< x3[i] <<std::endl;
+ }
+ }
+};
+----------------------------------------------------------------------------------------------------------------------------------------------------
+/*
+Autor: Carlos Eduardo da Silva Lima
+Tema: Sistema 2 Massa 2 Molas
+Linguagem: C++
+Data: 17/07/2021
+Arquivo fonte: arquivo.cpp
+*/
+//Inclussão de arquivos de cabeçalho
+#include <iostream>
+#include <tchar.h>
+#include "3Massa3Mola.h"
+int main()
+{
+ // Permite acentuação para o idioma português
+ _tsetlocale(LC_ALL, _T("portuguese"));
+ //Dados
+ std::cout<<"Universidade Federal de Goiás (UFG)"<<std::endl;
+ std::cout<<"Autor: Carlos Eduardo da Silva Lima\n\n\t******* Sistema 3 Massa e 3 Molas ******* \n\n"<<std::endl;
+     //       s = {t0,x1(t0),x2(t0),x3(t0),v1(t0),v2(t0),v3(t0),h,tol}
+     double s[] = {0,0,10,4,0,0,0,0.01,0.001};
+     int N      = 1000;
+ // Objeto
+ Sistema3Massa3Molas solcao;
+ //Chamada
+ solcao.sistema3Massa3Molas(s,N);
+ return 0;
+}
