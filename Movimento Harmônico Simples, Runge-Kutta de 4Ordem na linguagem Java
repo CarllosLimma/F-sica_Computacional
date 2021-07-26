@@ -1,0 +1,64 @@
+class OHS2
+{
+/*
+ Expressões para as derivadas - du1(t, b1, b2, .... bn)/dt = f1(t, b1, b2, .... bn)
+ du2(t, b1, b2, .... bn)/dt = f2(t, b1, b2, .... bn)
+ .
+ .
+ .
+ dun(t, b1, b2, .... bn)/dt = fn(t, b1, b2, .... bn)
+ */
+ //Primeira edo
+public double f1(double t, double x, double z)
+ {
+return (z);
+ }
+//Segunda edo
+public double f2(double t, double x, double z)
+ {
+//w = 2*pi*f rds/s e f = 2Hz
+double f = 2;
+double pi = Math.PI;
+double w = 2*pi*f;
+return (-Math.pow(w,2)*x);
+ }
+//Rotina para o método de Runge-Kutta de 4 Ordem
+public void rungeKutta4(double t0, double x0, double z0, double h, int N)
+ {
+// Declarano arrsys
+double []t = new double[N+1]; // tempo
+double []x = new double[N+1]; // Posição da massa no instante de tempo t
+double []z = new double[N+1]; // velocidade da massa no instatante de tempo t
+ //Inciando
+t[0] = t0; // tempo inicial
+x[0] = x0; // posição inicial
+z[0] = z0; // velociade inicial
+ //Loop
+for(int i = 0; i < N; i++)
+ {
+double k11 = h*f1(t[i],x[i],z[i]);
+double k12 = h*f2(t[i],x[i],z[i]);
+double k21 = h*f1((t[i] + (h/2)), (x[i] + (k11/2)), (z[i] + (k12/2)));
+double k22 = h*f2((t[i] + (h/2)), (x[i] + (k11/2)), (z[i] + (k12/2)));
+double k31 = h*f1((t[i] + (h/2)), (x[i] + (k21/2)), (z[i] + (k22/2)));
+double k32 = h*f2((t[i] + (h/2)), (x[i] + (k21/2)), (z[i] + (k22/2)));
+double k41 = h*f1((t[i] + h),(x[i] + k31),(z[i] + k32));
+double k42 = h*f2((t[i] + h),(x[i] + k31),(z[i] + k32));
+x[i+1] = x[i] + ((k11 + 2*k21 + 2*k31 + k41)/6);
+z[i+1] = z[i] + ((k12 + 2*k22 + 2*k32 + k42)/6);
+t[i+1] = t[i] + h;
+//Saída + erro
+System.out.println("t = "+t[i]+" || x = "+x[i]+" || z = "+z[i]);
+ }// fim do loop
+}// fim do método rungeKutta4
+}// fim da classe OHS2
+public class OHS1
+{
+public static void main(String[] args)
+ {
+//Objeto solução do tipo OHS2
+OHS2 solucao = new OHS2();
+//Chamada de métoddo - rungeKutta de quarta ordem
+solucao.rungeKutta4(0, 10,0, 0.02, 200);
+ }// fim o método principal main
+}// fim da classe OHS1
