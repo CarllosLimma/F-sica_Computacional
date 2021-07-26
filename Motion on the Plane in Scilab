@@ -1,0 +1,72 @@
+/*
+Autor: Carlos Eduardo da Silva Lima
+Tema: Motion on the Plane
+data: 26/04/2021
+*/
+//Entrada de dados
+x0 = 2 // metros
+y0 = 10 // metros
+R  = 1  // Raio em metros
+t0 = 0 // Tempo inicial dados em segundos
+w  = 65 // rad/s
+/*
+t0 = input("Entre com t0: ") // Tempo inicial dados em segundos
+x0 = input("Entre com x0: ") // metros
+y0 = input("Entre com y0: ") // metros
+R  = input("Entre com R: ")  // Raio em metros
+w  = input("Entre com W: ") // rad/s
+*/
+function [a0] = x(t)
+    a0 = x0 + R*cos(w*(t-t0))
+endfunction
+function [a1] = y(t)
+    a1 = y0 + R*sin(w*(t-t0))
+endfunction
+function [Velocidadex] = vx(t)
+    Velocidadex = -w*R*sin(w*(t-t0))
+endfunction
+function [Velocidadey] = vy(t)
+    Velocidadey = w*R*cos(w*(t - t0))
+endfunction
+function [Aceleracaox] = ax(t)
+    Aceleracaox = -w*w*R*cos(w*(t - t0))
+endfunction
+function [Aceleracaoy] = ay(t)
+    Aceleracaoy = -w*w*R*sin(w*(t - t0))
+endfunction
+// Cálculos e saida na "Tela"
+for t = 0:0.001:10
+    k0 = x(t)
+    k1 = y(t)
+    k2 = vx(t)
+    k3 = vy(t)
+    k4 = ax(t)
+    k5 = ay(t)
+    printf("t = %f || x = %f || y = %f || vx = %f || vy = %f || ax = %f || ay = %f\n",t,k0,k1,k2,k3,k4,k5);
+    //Gráfico 1
+   plot(t,k0,'-*', t, k1, '-+', t, k2, '-x',t, k3, '-o')
+   xtitle("Gráfico");
+   xgrid(0.05);
+    //Gráfico 2
+   //plot(t,k4,'-*', t, k5, '-+')
+   //xtitle("Gráfico");
+   //xgrid(0.05);
+end
+//
+for t = 0:0.001:10
+    k0 = x(t)
+    k1 = y(t)
+    k2 = vx(t)
+    k3 = vy(t)
+    k4 = ax(t)
+    k5 = ay(t)
+    printf("t = %f || x = %f || y = %f || vx = %f || vy = %f || ax = %f || ay = %f\n",t,k0,k1,k2,k3,k4,k5);
+    //Gráfico 1
+   plot(t,k0,'-*', t, k1, '-+', t, k2, '-x',t, k3, '-o')
+   xtitle("Gráfico");
+   xgrid(0.05);
+    //Gráfico 2
+   //plot(t,k4,'-*', t, k5, '-+')
+   //xtitle("Gráfico");
+   //xgrid(0.05);
+end
