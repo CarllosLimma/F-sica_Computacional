@@ -10,20 +10,20 @@ Linguagem: Python
 Diciplina: Física Computacional - UFG
 '''
 
-#Apresentação
+-#Apresentação
 print("Método de Runge-Kutta de 4Ordem na linguagem python - Atrator de Loretnz")
 
-# Inportando bibliotecas externa
+-# Inportando bibliotecas externa
 import numpy as np
 import matplotlib.pyplot as plt
 plt.style.use('dark_background')
 
-# Parâmetros de entrada para o atrator de Lorentz
+-# Parâmetros de entrada para o atrator de Lorentz
 s = 10
 r = 28
 b = 8/3
 
-# Condições iniciais
+-# Condições iniciais
 t0 = 0
 x0 = 5.00
 y0 = 5.01
@@ -31,7 +31,7 @@ z0 = 5.02
 N = 10000
 h = 0.01
 
-# Equações Diferenciais
+-# Equações Diferenciais
 def f1(t,x,y,z):
     return (s*(y-x))
 
@@ -41,7 +41,7 @@ def f2(t,x,y,z):
 def f3(t,x,y,z):
     return(x*y-b*z)
 
-# Arrays para o método de Runge-Kutta de 4Ordem
+-# Arrays para o método de Runge-Kutta de 4Ordem
 t  = np.empty(N)
 x1 = np.empty(N)
 x2 = np.empty(N)
@@ -78,10 +78,10 @@ for i in range(N-1):
     # Saída na tela
     print("t = ",t[i]," || x = ",x1[i]," || y = ",x2[i]," || z = ",x3[i])
 
-# Fim do loop for
+-# Fim do loop for
 
 
-# Gráfico
+-# Gráfico
 plt.figure(figsize = (10,10))
 plt.plot(x1,x2,'-', color='red', alpha = 2, markersize=5)
 plt.title("Atrator de Lorentz", color='red', alpha = 10)
