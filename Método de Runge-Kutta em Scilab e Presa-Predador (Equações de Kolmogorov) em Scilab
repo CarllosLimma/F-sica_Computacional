@@ -1,0 +1,52 @@
+/*
+Estuos de Cálculo Numérico e programação em Scilab e linguagem Java
+Autor: Carlos Eduardo da Silva Lima 
+Método de Runge-Kutta em Scilab e Presa-Predador (Equações de Kolmogorov)
+data: 
+*/
+// Derivadas, note o seguinte exemplo; dy/dx = f1(x,y,u) = u, e du/dx = f2(x,y,u) = y - x*x - 2*x + 1
+function [j0] = f1(t,x,y)
+    a = 0.36;
+    c = 1.5;
+    j0 = (-a*x*x + 1)*x - (1-exp(-c*x))*y;
+endfunction
+function [j1] = f2(t,x,y)
+    b = 2;
+    j1 = b*x*x*y-y;
+endfunction
+/* 
+Condições iniciais
+*/
+t0 = 0;
+x0 = 1.4;
+y0 = 0.6;
+// Inicializano as novas variáveis justamente a partir das condições iniciais!.
+t = x0;
+x = x0;
+y = y0;
+// Paraâmetros para o méwtoo de Runge-Kutta de quarta ordem
+N = 200; // quantiade de interações
+h = 0.02; // Passo
+// No loop for tem-se -----> t = tempo
+for t=0:0.01:N
+    // Runge-Kutta de quarta ordem
+    k11 = h*f1(t,x,y);
+    k12 = h*f2(t,x,y);
+    k21 = h*f1(t + (h/2),x + (k11/2),y + (k12/2));
+    k22 = h*f2(t + (h/2),x + (k11/2),y + (k12/2));
+    k31 = h*f1(t + (h/2),x + (k21/2),y + (k22/2));
+    k32 = h*f2(t + (h/2),x + (k21/2),y + (k22/2)); 
+    k41 = h*f1(t + h,x + k31,y + k32);
+    k42 = h*f2(t + h,x + k31,y + k32); 
+    x = x + ((k11 + 2*k21 + 2*k31 + k41)/6);
+    y = y + ((k12 + 2*k22 + 2*k32 + k42)/6);
+    t = t + h;
+   //Saída
+   printf("t = %f || x = %f || y = %f\n",t,x,y);
+   //Gráfico
+   //plot(t,x,'-*')// tempo x posição
+   //plot(t,y,'-o') // tempo x velocidade
+   plot(x,y,'-x')// espaço de fase 
+   xtitle("Gráfico da SoluçãoPresa-Predador (Equações de Kolmogorov) via Runge-Kutta de Quarta Ordem");
+   xgrid(0.05);
+end
