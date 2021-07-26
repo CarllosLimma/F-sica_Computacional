@@ -1,0 +1,145 @@
+/*
+Universidade Federal de Goiás (UFG)
+Autor: Carlos Eduardo da Silva Lima
+Tema: Pêndulo duplo Caótico
+Diciplina: Física Computacional 
+Linguagem: C++ 
+IDE: Falcom C++
+*/
+//Inclussão de arquivos de cabeçalho
+#include <iostream>
+#include <cmath>
+#include <tchar.h>
+#include <fstream>
+ //Atributos do pêndulo caótico
+#define  m1  2.0
+#define  m2  2.0
+#define  l1  1.5 
+#define  l2  1.5
+#define  g  9.81
+#define  Pi_     3.14159265358979323846  /* pi */ 
+/* Na classe PenduloDuploCaótico defnimos os atributos e funções para o problema 
+do Pendulo Duplo Caótico*/
+class PenduloDuploCaotico
+{
+ // Vamos entrar com as EDO´s
+ public:
+ // Primeira EDO
+ double f1(double t, double x1, double x2, double v1, double v2)
+ {
+ return(v1);
+ }
+ // Segunda EDO
+ double f2(double t, double x1, double x2, double v1, double v2)
+ {
+ return(v2);
+ }
+ // Terceira EDO
+ double f3(double t, double x1, double x2, double v1, double v2)
+ {
+ double k0 = -g*(2*m1+m2)*sin(x1) - m2*g*sin(x1-2*x2) - 2*m2*sin(x1-x2)*(l2*pow(v2,2) + l1*pow(v1,2)*cos(x1-x2));
+ double k1 = l1*(2*m1 + m2 - m2*cos(2*x1-2*x2));
+ return(k0/k1);
+ }
+ // Quarta EDO
+ double f4(double t, double x1, double x2, double v1, double v2)
+ {
+ double k0 = 2*sin(x1-x2)*(pow(v1,2)*l1*(m1+m2) + g*(m1+m2)*cos(x1) + pow(v2,2)*l2*m2*cos(x1-x2));
+ double k1 = l2*(2*m1 + m2 - m2*cos(2*x1-2*x2));
+ return(k0/k1);
+ }
+ /* Métodos Numéricos para resolução das EDO´s de primeira ordem acima declaradas*/
+ //Runge-Kutta de 4Ordem
+ void RungeKutta4O(double s[], double h, int N)
+ {
+ // Variáveis
+ double t [N];
+ double x1[N];
+ double x2[N];
+ double x3[N];
+ double x4[N];
+ /* Inicialização das variáveis acima declaradas, nas condições 
+ iniciais.
+ */
+ t [0] = s[0]; // s[0] = t0
+ x1[0] = s[1]; // s[1] = x10 
+  x2[0] = s[2]; // s[2] = x20
+ x3[0] = s[3]; // s[3] = v10
+ x4[0] = s[4]; // s[4] = v20 
+ /* Engeria Cinética, Energia Potencial, Lagrangiana e Hamiltoniano e Energia total*/
+ double V[N];  // Energia Potêncial do sistema 
+ double T[N];  // Energia Cinética do sistema 
+ double L[N];  // Lagrangiana do sistema 
+ double H[N];  // Hamiltoniana do sistema 
+ double p1[N]; // Momentum da primeira massa
+ double p2[N]; // Momentum da primeira massa
+         // Dentro o loop for, emplementamos o algoritimo de Runge-Kutta 4Ordem
+   for(int i = 0; i<(N-1); i++)
+   {
+    double k11 = h*f1(t[i],x1[i],x2[i],x3[i],x4[i]);
+    double k12 = h*f2(t[i],x1[i],x2[i],x3[i],x4[i]);
+    double k13 = h*f3(t[i],x1[i],x2[i],x3[i],x4[i]);
+    double k14 = h*f4(t[i],x1[i],x2[i],x3[i],x4[i]);
+    double k21 = h*f1(t[i]+(h/2),x1[i]+(k11/2),x2[i]+(k12/2),x3[i]+(k13/2),x4[i]+(k14/2));
+    double k22 = h*f2(t[i]+(h/2),x1[i]+(k11/2),x2[i]+(k12/2),x3[i]+(k13/2),x4[i]+(k14/2));
+    double k23 = h*f3(t[i]+(h/2),x1[i]+(k11/2),x2[i]+(k12/2),x3[i]+(k13/2),x4[i]+(k14/2));
+    double k24 = h*f4(t[i]+(h/2),x1[i]+(k11/2),x2[i]+(k12/2),x3[i]+(k13/2),x4[i]+(k14/2));
+    double k31 = h*f1(t[i]+(h/2),x1[i]+(k21/2),x2[i]+(k22/2),x3[i]+(k23/2),x4[i]+(k24/2));
+    double k32 = h*f2(t[i]+(h/2),x1[i]+(k21/2),x2[i]+(k22/2),x3[i]+(k23/2),x4[i]+(k24/2));
+    double k33 = h*f3(t[i]+(h/2),x1[i]+(k21/2),x2[i]+(k22/2),x3[i]+(k23/2),x4[i]+(k24/2));
+    double k34 = h*f4(t[i]+(h/2),x1[i]+(k21/2),x2[i]+(k22/2),x3[i]+(k23/2),x4[i]+(k24/2));
+ double k41 = h*f1(t[i]+h,x1[i]+k31,x2[i]+k32,x3[i]+k33,x4[i]+k34);
+    double k42 = h*f2(t[i]+h,x1[i]+k31,x2[i]+k32,x3[i]+k33,x4[i]+k34);
+    double k43 = h*f3(t[i]+h,x1[i]+k31,x2[i]+k32,x3[i]+k33,x4[i]+k34);
+    double k44 = h*f4(t[i]+h,x1[i]+k31,x2[i]+k32,x3[i]+k33,x4[i]+k34);
+            x1[i+1] = x1[i] + ((k11 + 2*(k21 + k31) + k41)/6);
+            x2[i+1] = x2[i] + ((k12 + 2*(k22 + k32) + k42)/6);
+            x3[i+1] = x3[i] + ((k13 + 2*(k23 + k33) + k43)/6);
+            x4[i+1] = x4[i] + ((k14 + 2*(k24 + k34) + k44)/6);
+             t[i+1] =  t[i] + h;
+             //Energia, Momentum etc...
+              V[i] = -(m1+m2)*g*l1*cos(x1[i]) - m2*g*l2*cos(x2[i]);// Energia Potencia
+              T[i] = (1/2)*m1*pow(l1*x3[i],2) + (1/2)*m2*(pow(l1*x3[i],2) + pow(l2*x4[i],2) + 2*l1*l2*x3[i]*x4[i]*cos(x1[i]-x2[i])); // Energia Cinética
+              L[i] = T[i] - V[i]; // Lagrangiana
+             p1[i] = (m1+m2)*pow(l1,2)*x3[i] + m2*l1*l2*x4[i]*cos(x1[i]-x2[i]); // Momentum associada a massa m1
+             p2[i] = m2*pow(l2,2)*x4[i] + m2*l1*l2*x3[i]*cos(x1[i]-x2[i]); // Momentum associada a massa m2
+              H[i] = x3[i]*p1[i] + x4[i]*p2[i] - L[i]; // Hamiltoniana 
+   }// fim da função RungeKutta4O
+   //Saída no Dos
+   for(int i = 0; i<(N-1); i++)
+   {
+    std::cout<<"t = "<<t[i]<<" || x1 = "<<x1[i]<<" || x2 = "<<x2[i]<<" || x3 = "<<x3[i]<<" || x4 = "<<x4[i]<<std::endl;
+   } 
+   // Arquivo .txt 
+      std::ofstream saidaPD;
+   //
+          saidaPD.open("PenuloDuploCaotico.txt",std::ios::app);
+           //Saída em um arquivo .txt
+   for(int i = 0; i<(N-1); i++)
+   {
+ //saidaPD<<"t = "<<t[i]<<" || x1 = "<<x1[i]<<" || x2 = "<<x2[i]<<" || x3 = "<<x3[i]<<" || x4 = "<<x4[i]<<std::endl;
+              saidaPD<< x2[i] <<"   "<< x4[i] << std::endl;
+ //saidaPD<< x1[i] <<"   "<< x2[i] << std::endl;
+ //saidaPD<< x1[i] <<"   "<< x4[i] << std::endl;
+ //saidaPD << x1[i] <<"   "<< H[i] << std::endl;
+ //saidaPD << t[i] <<"   "<< x1[i] << std::endl;
+   } 
+ }// fim o método RungeKutta4O
+};
+/* Função Principal main */
+int main()
+{
+ // Permite acentuação para o idioma português
+ _tsetlocale(LC_ALL, _T("portuguese"));
+ // Apresentação
+ std::cout<<"\t\t**** Pêndulo Duplo Caótico ****" << std::endl;
+ //Dados
+ double s[] = {0,(Pi_/180)*45,(Pi_/180)*0,0,0};
+ double h   = 0.01;
+ int N    = 10000;
+ //Objeto
+ PenduloDuploCaotico penduloDuploCaotico;
+ //Chamada de Método
+ penduloDuploCaotico.RungeKutta4O(s,h,N);
+ return 0;
+}
