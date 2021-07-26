@@ -1,0 +1,110 @@
+/*
+Autor: Carlos Eduardo da Silva Lima
+Tema: Atrator de Loretnz 
+Linguagem: C++
+Data: 28/05/2021
+Arquivo fonte, cpp.
+*/
+//Inclussão de arquivos de cabeçalho
+#include <iostream>
+#include <tchar.h>
+#include "AtratorLorentzB.h"
+int main()
+{
+ // Permite acentuação para o idioma português
+ _tsetlocale(LC_ALL, _T("portuguese"));
+ //Dados
+ std::cout<<"Universidade Federal de Goiás (UFG)"<<std::endl;
+ std::cout<<"Autor: Carlos Eduardo da Silva Lima\n\n\t******* Atrator de Loretnz ******* \n\n";
+ //Objeto
+ AtratorLorentzB solution;
+ //Chamada de método
+ solution.atratorLorentz(0,5,5,5,0.01,100);
+ //fim
+ solution.fim();
+ return 0;
+}
+*******************************************************
+/*
+Autor: Carlos Eduardo da Silva Lima
+Tema: Atrator de Loretnz 
+Linguagem: C++
+Data: 28/05/2021
+Arquivo de cabeçalho
+*/
+//Inclussão de arquivos de cabeçalho
+#include <iostream>
+#include <tchar.h>
+#include <fstream>
+// Variáveis Globais - parâmetros para as equações de Lorentz
+float s = 10;
+float r = 28;
+double b = 2.66666667;
+// Classe publica 
+class AtratorLorentzB
+{
+ public:
+ float f1(float t, float x, float y, float z)
+ {
+ return(s*(y-x));
+ };
+ float f2(float t, float x, float y, float z)
+ {
+ return(r*x - y - x*z);
+ };
+ float f3(float t, float x, float y, float z)
+ {
+ return(x*y-b*z);
+ };
+ /* Vamos inplementar o algoritmo de Runge-Kutta deOrdem para resolução
+ do sistema de equações diferenciais  de primeira orem com as condições
+ iniciais
+ */
+ public:
+ void atratorLorentz(float t0, float x0, float y0, float z0, float h, int N)
+ {
+ // 
+ std::ofstream saida;
+ //
+ saida.open("AtratorLorentz.txt",std::ios::app);
+ /* Criando novas variáveis ae as inicializando-as com as de entratad
+  Tipo efinido pelo usuário da função. N é a quantidade ed interações 
+  desejadas pelo próprio usuário do software. h e o chamado paso, per
+  tence as equações de Runge-Kutta 4Ordem.
+ */
+ float t, x, y, z;
+ t = t0;
+ x = x0;
+ y = y0;
+ z = z0;
+ //loop for - implementação do algoritimo de Runge-Kutta 4Ord.
+ for(float i = 0; i<=N; i+=0.01)
+ {
+      // Runge-Kutta de quarta ordem
+     float k11 = h*f1(t,x,y,z);
+     float k12 = h*f2(t,x,y,z);
+     float k13 = h*f3(t,x,y,z);
+     float k21 = h*f1(t + (h/2),x + (k11/2),y + (k12/2), z + (k13/2));
+     float k22 = h*f2(t + (h/2),x + (k11/2),y + (k12/2), z + (k13/2));
+     float k23 = h*f3(t + (h/2),x + (k11/2),y + (k12/2), z + (k13/2));
+     float k31 = h*f1(t + (h/2),x + (k21/2),y + (k22/2), z + (k23/2));
+     float k32 = h*f2(t + (h/2),x + (k21/2),y + (k22/2), z + (k23/2)); 
+     float k33 = h*f3(t + (h/2),x + (k21/2),y + (k22/2), z + (k23/2));
+     float k41 = h*f1(t + h,x + k31,y + k32, z + k33);
+     float k42 = h*f2(t + h,x + k31,y + k32, z + k33);
+     float k43 = h*f3(t + h,x + k31,y + k32, z + k33); 
+     x = x + ((k11 + 2*k21 + 2*k31 + k41)/6);
+     y = y + ((k12 + 2*k22 + 2*k32 + k42)/6);
+     z = z + ((k13 + 2*k23 + 2*k33 + k43)/6);
+     t = t + h;
+     //Saída na tela
+     std::cout<<"t = "<< t <<" || x = "<< x <<" || y = "<< y <<" || z = "<< z <<std::endl;
+     // Saida para um arquivo .txt(AtratorLorentz.txt) 
+ saida << x << " " << y << std::endl;
+ }
+ };
+ void fim()
+ {
+ std::cout<<"\n\t\t********** fim! **********"<<std::endl;
+ };
+};
