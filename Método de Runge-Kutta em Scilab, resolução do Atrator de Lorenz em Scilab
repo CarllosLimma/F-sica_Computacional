@@ -1,0 +1,63 @@
+/*
+Estudos de Cálculo Numérico e programação em Scilab e linguagem Java
+Autor: Carlos Eduardo da Silva Lima 
+Método de Runge-Kutta em Scilab, resolução do Atrator de Lorenz
+data: 27/05/2021
+*/
+// Parâmetros de entrada para o atrator de Lorentz
+s = 10;
+r = 28;
+b = 8/3;
+// EDO´S 
+function [j0] = f1(t,x,y,z)
+    j0 = s*(y-x);
+endfunction
+function [j1] = f2(t,x,y,z)
+    j1 = r*x - y - x*z;
+endfunction
+function [j2] = f3(t,x,y,z)
+    j2 = x*y-b*z;
+endfunction
+/* 
+Condições iniciais
+*/
+t0 = 0;
+x0 = 5;
+y0 = 5;
+z0 = 5;
+// Inicializano as novas variáveis justamente a partir das condições iniciais!.
+t = t0;
+x = x0;
+y = y0;
+z = z0;
+// Paraâmetros para o méwtoo de Runge-Kutta de quarta ordem
+N = 200; // quantiade de interações
+h = 0.001; // Passo
+// No loop for tem-se -----> t = tempo
+for t=0:0.01:N
+    // Runge-Kutta de quarta ordem
+    k11 = h*f1(t,x,y,z);
+    k12 = h*f2(t,x,y,z);
+    k13 = h*f3(t,x,y,z);
+    k21 = h*f1(t + (h/2),x + (k11/2),y + (k12/2), z + (k13/2));
+    k22 = h*f2(t + (h/2),x + (k11/2),y + (k12/2), z + (k13/2));
+    k23 = h*f3(t + (h/2),x + (k11/2),y + (k12/2), z + (k13/2));
+    k31 = h*f1(t + (h/2),x + (k21/2),y + (k22/2), z + (k23/2));
+    k32 = h*f2(t + (h/2),x + (k21/2),y + (k22/2), z + (k23/2)); 
+    k33 = h*f3(t + (h/2),x + (k21/2),y + (k22/2), z + (k23/2));
+    k41 = h*f1(t + h,x + k31,y + k32, z + k33);
+    k42 = h*f2(t + h,x + k31,y + k32, z + k33);
+    k43 = h*f3(t + h,x + k31,y + k32, z + k33); 
+    x = x + ((k11 + 2*k21 + 2*k31 + k41)/6);
+    y = y + ((k12 + 2*k22 + 2*k32 + k42)/6);
+    z = z + ((k13 + 2*k23 + 2*k33 + k43)/6);
+    t = t + h;
+   //Saída
+   printf("t = %f || x = %f || y = %f || z = %f\n",t,x,y,z);
+   //Gráfico
+   //plot(t,x,'-*')
+   //plot(t,y,'-o') 
+   plot(x,z,'-*',x,y,'-o') 
+   xtitle("Gráfico da Solução Atrator de Lorenz via Runge-Kutta de Quarta Ordem");
+   xgrid(0.05);
+end
