@@ -1,0 +1,74 @@
+/************************************************************************************************************************************ 
+Mapa de Hénon, programação na linguagem  C++ (IDE Falcon C++). Gráfico: Gnuplot. 
+Neste programa geramos um saída no promp de comando, além de um arquivo.txt. São dois arquivos, o primeiro  .cpp, o segundo .h.
+************************************************************************************************************************************/
+
+/*
+Autor: Carlos Eduardo da Silva Lima
+Tema: Estudos de programaÃ§Ã£o na linguagem C++, saÃ­da de dados em arquivos.txt
+Tema: Mapa de Henon 
+Linguagem: C++
+Data: 08/06/2021
+Arquivo fonte, cpp.
+*/
+#include <iostream>
+#include "MapaHenon.h"
+int main()
+{
+    //Objeto
+    MapaHenon s;
+    // Chamada de mÃ©todo
+    s.heron(0, 0, 100000);
+}
+*********************************************************************
+/*
+Autor: Carlos Eduardo da Silva Lima
+Tema: Estudos de programação na linguagem C++, saída de dados em arquivos.txt
+Tema: Mapa de Henon
+Linguagem: C++
+Data: 08/06/2021
+Arquivo fonte, h. 
+*/
+// Arquivos de Cabeçalho
+#include <iostream>
+#include <fstream>
+#include <math.h>
+// Classe 
+class MapaHenon
+{
+public:
+ double f1(double x, double y)
+ {
+ double a = 1.4;
+ //double b = 0.3;
+ return (1 - a*pow(x, 2) + y);
+ }
+ double f2(double x, double y)
+ {
+ //double a = 1.4;
+ double b = 0.3;
+ return (b*x);
+ }
+ void heron(double x0, double y0, int N)
+ {
+ //
+ std::ofstream saida;
+ //
+ saida.open("Mapa_Heno.txt", std::ios::app);
+ // Variáveis
+ double x[N];
+ double y[N];
+ // Inicialização das novas variáveis
+ x[0] = x0;
+ y[0] = y0;
+ for (int i = 0; i < (N-1); i++)
+ {
+ x[i+1] = f1(x[i],y[i]); // Poderiamos fazer da seguinte forma: 1 - a*Math.pow(x[i],2) + y[i]
+ y[i+1] = f2(x[i],y[i]);       // Poderiamos fazer da seguinte forma:  b*x[i]
+ // Saída - promp
+ std::cout << "x[" << i << "] = " << x[i] << " || y[" << i << "] = " << y[i] << std::endl;
+ // Saída - arquivo.txt
+ saida << x[i] << "  " << y[i] << std::endl;
+ }// fim do loop
+ }
+};
