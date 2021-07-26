@@ -1,0 +1,49 @@
+/*
+ * Autor: Carlos Eduardo da Silva Lima 
+ * Tema: Multiplicação de Matrizes
+ * Data: 23/03/2021
+ * 
+ * */
+public class MultiplicacaoA 
+{
+ public static void main(String[] args) 
+ {
+ // Objeto Multiplicação atribuída à solução
+ MultiplicacaoB solucao = new MultiplicacaoB ();
+ solucao.m();
+ }// fim o método main
+}// fim da classe MultiplicacaoA
+**********************************************************************************************************************************************
+/*
+ * Autor: Carlos Eduardo da Silva Lima 
+ * Tema: Multiplicação de Matrizes
+ * Data: 23/03/2021
+ * 
+ * */
+public class MultiplicacaoB 
+{
+ // Matriz quadrada 3x3
+ public void m()
+ {
+ // Entre com a matriz A
+ double a[][] = {{1,0,0}, {0,1,0}, {0,0,1}};
+ // Entre com a matriz B
+ double b[][] = {{1,0,0}, {1,0,0}, {1,0,0}};
+ // Matriz C
+ double c[][] = new double[4][4];
+ //***************************************************//
+ System.out.println("\n ***** Saída ***** \n");
+ for(int i = 0; i<a.length; i++)
+ {
+ for(int j = 0; j<b.length; j++)
+ {
+ c[i][j] = 0;
+ for(int k = 0; k<a.length; k++)
+ {
+ c[i][j] += a[i][k]*b[k][j];
+ }
+ System.out.println("c["+i+"]"+"["+j+"] = "+c[i][j]);
+ }
+ }
+ }// fim do método multiplicação => m
+}// fim da classe MultiplicacaoB
