@@ -1,0 +1,142 @@
+/* Autor: Carlos Eduardo a Silva Lima
+ * Tema: Métoo de Newton-Rapshon não linear na linguagem Java
+ * Data: 01/04/2021
+ * 
+ * */
+import javax.swing.JOptionPane; // Importação da classe JoptionPane
+public class NewtonRapshonNaoLinearA 
+{
+ public static void main(String[] args) 
+ {
+ // Caíxa de diálogo - Saída da solução final 
+ JOptionPane.showMessageDialog(null,"Autor: Carlos Eduardo da Silva Lima\nData: 02/04/2021\nTema: Método de Newton-Rapshon para sistemas de equações não lineares");
+ // tamanho do array
+ int n = 2; 
+ double TOL= 0.01;
+ int N = 1000;
+ // Chute inicial
+ double x0[][] = new double[n][1];
+ x0[0][0] = 1.8;
+ x0[1][0] = 0.5;
+ // Objeto
+ NewtonRapshonNaoLinearB s = new NewtonRapshonNaoLinearB();
+ s.newtonRaphson(x0, TOL, N);
+ }// fim o método maoin
+}// Fim a classe NewtonRapshonNaoLinearA
+***********************************************************************
+/* Autor: Carlos Eduardo a Silva Lima
+ * Tema: Métoo de Newton-Rapshon não linear na linguagem Java
+ * Data: 01/04/2021
+ * 
+ * */
+import javax.swing.JOptionPane; // Importação da classe JoptionPane
+public class NewtonRapshonNaoLinearB 
+{
+ int n = 2; // tamanho do array
+ // função f
+ public double[][] f(double x0[][])
+ {
+ double r[][] = new double[n][1];
+ // Insira as expressões para funções
+ r[0][0] = x0[0][0]*x0[1][0] - 1;
+ r[1][0] = Math.pow(x0[0][0],2) + Math.pow(x0[1][0],2) - 2;
+ return r;
+ }
+ // Jacobiano
+ public double[][] jacobiano(double x0[][])
+ {
+ double j[][] = new double[n][n];
+ // Insira as expressões para as derivadas das funções
+ j[0][0] = x0[1][0];
+ j[0][1] = x0[0][0];
+ j[1][0] = 2*x0[0][0];
+ j[1][1] = 2*x0[1][0];
+ return j;
+ }
+ // Cálculo a Matriz Inversa
+ public double[][] InverteMatriz(double A[][])
+ {
+ double con;
+ for (int k=0; k<n; k++) 
+ {
+    con = A[k][k];
+    A[k][k] = 1;
+ for (int j=0; j<n; j++)
+    A[k][j] = A[k][j]/con;
+ for (int i=0; i<n; i++) 
+ {
+ if (i!=k) 
+ {
+ con = A[i][k];
+   A[i][k] = 0.0;
+   for (int j=0; j<n; j++)
+     A[i][j] = A[i][j] - A[k][j]*con;
+    }
+ }
+ }
+ return A;
+ }
+ // Cálculo da Multiplicação de Matrizes 
+ public double[][] MultiplicaMatriz(double a[][], double b[][])
+ {
+ double c[][] = new double[n+1][1]; // n+1 linhas por 1 coluna
+ for(int i = 0; i<n; i++)
+ {
+ for(int j = 0; j<n; j++)
+ {
+ c[i][0] = 0;
+ for(int k = 0; k<n; k++)
+ {
+ c[i][0] += a[i][k]*b[k][0]; 
+ }
+ }
+ }
+ return c;
+ }
+ // Módulo de deltax
+ public double moddx(double [][] x0)
+ {
+ double Moddx = Math.sqrt(Math.pow(x0[0][0],2)+ Math.pow(x0[1][0],2));
+ return Moddx;
+ }
+ // Método newtonRaphson
+ public void newtonRaphson(double x0[][], double TOL, int N)
+ {
+ double[][] x  = new double[n][1];
+ x[0][0] = x0[0][0];
+ x[1][0] = x0[1][0];
+ System.out.println("\t *** Saída *** \n");
+ int i = 0;
+ do
+ {
+ i+=1;
+ double dx1 = -MultiplicaMatriz(InverteMatriz(jacobiano(x)),f(x))[0][0]; 
+ double dx2 = -MultiplicaMatriz(InverteMatriz(jacobiano(x)),f(x))[1][0]; 
+ x[0][0] += dx1;
+ x[1][0] += dx2;
+ //System.out.println(x[0][0]);
+ //System.out.println(x[1][0]);
+ if(f(x)[0][0]== 0 && f(x)[1][0]== 0){
+ System.out.println("x1 = "+x[0][0]);
+ System.out.println("x2 = "+x[1][0]);
+ break;
+ }else {
+ //System.out.println("***");
+ continue;
+ }
+ }while(i<=N);
+ // Caíxa de diálogo - Saída da solução final 
+ JOptionPane.showMessageDialog(null,"Solução\nx1 = "+x[0][0]+"\nx2 = "+x[1][0]);
+ }//fim do método newtonRaphson
+}// Fim a classe NewtonRapshonNaoLinearB
+/*
+ do
+  {
+ double dx1 = -MultiplicaMatriz(InverteMatriz(jacobiano(x)),f(x))[0][0]; 
+ double dx2 = -MultiplicaMatriz(InverteMatriz(jacobiano(x)),f(x))[1][0]; 
+ x[0][0] += dx1;
+ x[1][0] += dx2;
+ System.out.println(x[0][0]);
+ System.out.println(x[1][0]);
+ }while(moddx(x0)>TOL);
+ */
