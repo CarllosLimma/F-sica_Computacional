@@ -1,0 +1,110 @@
+/*
+Autor: Carlos Eduardo da Silva Lima
+Tema: Atrator de Rössler 
+Linguagem: C++
+Data: 09/06/2021
+Arquivo fonte, cpp.
+*/
+//Inclussão de arquivos de cabeçalho
+#include <iostream>
+#include <tchar.h>
+#include "AtratorRossler.h"
+int main()
+{
+ // Permite acentuação para o idioma português
+ _tsetlocale(LC_ALL, _T("portuguese"));
+ //Dados
+ std::cout<<"Universidade Federal de Goiás (UFG)"<<std::endl;
+ std::cout<<"Autor: Carlos Eduardo da Silva Lima\n\n\t******* Atrator de Rössler ******* \n\n";
+ //Objeto
+ AtratorRossler solution;
+ //Chamada de método
+ solution.atratorRossler(0,1,1.001,1.5,0.1,10000);
+ //fim
+ solution.fim();
+ return 0;
+}
+*****************************************************************
+/*
+Autor: Carlos Eduardo da Silva Lima
+Tema: Atrator de Rössler 
+Linguagem: C++
+Data: 09/06/2021
+Arquivo fonte, h.
+*/
+//Inclussão de arquivos de cabeçalho
+#include <iostream>
+#include <tchar.h>
+#include <fstream>
+// Variáveis Globais - parâmetros para as equações de Chen
+double a = 0.2;
+double b = 0.2;
+double c = 5.7;
+// Classe publica 
+class AtratorRossler
+{
+ public:
+ float f1(float t, float x, float y, float z)
+ {
+ return((-1)*(y+z));
+ };
+ float f2(float t, float x, float y, float z)
+ {
+ return(x + a*y);
+ };
+ float f3(float t, float x, float y, float z)
+ {
+ return(b + x*z - c*z);
+ };
+ /* Vamos inplementar o algoritmo de Runge-Kutta deOrdem para resolução
+ do sistema de equações diferenciais  de primeira orem com as condições
+ iniciais
+ */
+ public:
+ void atratorRossler(float t0, float x0, float y0, float z0, float h, int N)
+ {
+ // 
+ std::ofstream saida;
+ //
+ saida.open("AtratorRossler.txt",std::ios::app);
+ /* Criando novas variáveis ae as inicializando-as com as de entratad
+  Tipo efinido pelo usuário da função. N é a quantidade ed interações 
+  desejadas pelo próprio usuário do software. h e o chamado paso, per
+  tence as equações de Runge-Kutta 4Ordem.
+ */
+ double t[N], x[N], y[N], z[N];
+ t[0] = t0;
+ x[0] = x0;
+ y[0] = y0;
+ z[0] = z0;
+ //loop for - implementação do algoritimo de Runge-Kutta 4Ord.
+ for(int i = 0; i<(N-1); i++)
+ {
+      // Runge-Kutta de quarta ordem
+     double k11 = h*f1(t[i],x[i],y[i],z[i]);
+     double k12 = h*f2(t[i],x[i],y[i],z[i]);
+     double k13 = h*f3(t[i],x[i],y[i],z[i]);
+     double k21 = h*f1(t[i] + (h/2),x[i] + (k11/2),y[i] + (k12/2), z[i] + (k13/2));
+     double k22 = h*f2(t[i] + (h/2),x[i] + (k11/2),y[i] + (k12/2), z[i] + (k13/2));
+     double k23 = h*f3(t[i] + (h/2),x[i] + (k11/2),y[i] + (k12/2), z[i] + (k13/2));
+     double k31 = h*f1(t[i] + (h/2),x[i] + (k21/2),y[i] + (k22/2), z[i] + (k23/2));
+     double k32 = h*f2(t[i] + (h/2),x[i] + (k21/2),y[i] + (k22/2), z[i] + (k23/2)); 
+     double k33 = h*f3(t[i] + (h/2),x[i] + (k21/2),y[i] + (k22/2), z[i] + (k23/2));
+     double k41 = h*f1(t[i] + h,x[i] + k31,y[i] + k32, z[i] + k33);
+     double k42 = h*f2(t[i] + h,x[i] + k31,y[i] + k32, z[i] + k33);
+     double k43 = h*f3(t[i] + h,x[i] + k31,y[i] + k32, z[i] + k33); 
+     x[i+1] = x[i] + ((k11 + 2*k21 + 2*k31 + k41)/6);
+     y[i+1] = y[i] + ((k12 + 2*k22 + 2*k32 + k42)/6);
+     z[i+1] = z[i] + ((k13 + 2*k23 + 2*k33 + k43)/6);
+     t[i+1] = t[i] + h;
+     //Saída na tela
+     std::cout<<"t = "<< t[i] <<" || x = "<< x[i] <<" || y = "<< y[i] <<" || z = "<< z[i] <<std::endl;
+     // Saida para um arquivo .txt(AtratorLorentz.txt) 
+ saida << x[i] << "   " << y[i] << std::endl;
+ }
+ };
+ void fim()
+ {
+ std::cout<<"\n\t\t********** fim! **********"<<std::endl;
+ };
+};
