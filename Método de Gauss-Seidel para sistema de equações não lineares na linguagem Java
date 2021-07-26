@@ -1,0 +1,75 @@
+/*
+Autor: Carlos Eduardo da Silva Lima
+Tema: Método de Gauss-Seidel para sistema de equações não lineares 
+Data: 23/05/2021
+*/
+public class GaussSeidel 
+{
+    public static void main(String[] args)
+    {
+        //Objeto
+        GS solution = new GS();
+        //Chamada de métodos
+        solution.GaussSeidel(0,1);
+    }// fim do método principal main
+}// fim da classe 
+****************************************************************************************
+****************************************************************************************
+/*
+Autor: Carlos Eduardo da Silva Lima
+Tema: Método de Gauss-Seidel para sistema de equações não lineares 
+Data: 23/05/2021
+*/
+public class GS
+{
+  /*
+  Vamos entrar com as equações, tais que
+  f1(x1,x2,...,xn) = 0
+  f2(x1,x2,...,xn) = 0
+  f3(x1,x2,...,xn) = 0
+  .
+  .
+  .
+  fn(x1,x2,...,xn) = 0
+  */
+  // Entre com a expressão de f1
+  public double f1(double x, double y)
+  {
+    return((y/3) + (0.633));
+  }
+  // Entre com a expressão de f2
+  public double f2(double x, double y)
+  {
+    return((-Math.pow(x,2)) + (1.8));
+  }
+  /*
+    Para o método abaixo, vamos definir um método para 
+    aplicabilidade do algoritmo de Gauss-Seidel para sistemas
+    de equações não lineares.
+  */
+  public void GaussSeidel(double x0, double y0)
+  {
+    // Quantidade de inrteraçãoes
+    int N = 1000000;
+    // Erro
+    double erro = Math.pow(10,-16);
+    // Variáveis 
+    double [][] x = new double[N][1];
+    double [][] y = new double[N][1];
+    //Incializando 
+    x[0][0] = x0;
+    y[0][0] = y0;
+    //Loop - aplicabilidade do algoritmo de GaussSeidel
+    for(int i = 0; i<x.length; i++)
+    {
+      x[i+1][0] = f1(x[i][0], y[i][0]);
+      y[i+1][0] = f2(x[i][0], y[i][0]);
+      // Saída
+      if(Math.abs((x[i+1][0] - x[i][0])/x[i+1][0])<erro)
+      {
+        System.out.println("x["+i+"]["+0+"] = "+x[i][0]+" || y["+i+"]["+0+"] = "+y[i+1][0]);
+        break;
+      }
+    }
+  }// fim 
+}// fim da classe GS
