@@ -1,0 +1,60 @@
+/*
+* Autor; Carlos Eduado da Silva Lima
+* Data: 05/05/2021
+* Livro: Mario Thorton Mecânica Clássica. Vibrações caóticas pagina 159, Exercicicio mapa de Henon
+*
+* Tema: Mapa de Henon na linguagem Java
+* */
+
+public class HeronA
+{
+    public static void main(String[] args)
+    {
+        //Objeto
+        HeronB solution = new HeronB();
+        //Chamada de método
+        solution.heron(0,0,100000);
+    }// fim do métododo principal main
+}// fim da classe HeronA
+
+**************************************************************************************************************
+**************************************************************************************************************
+
+/*
+ * Autor; Carlos Eduado da Silva Lima
+ * Data: 05/05/2021
+ * Livro: Mario Thorton Mecânica Clássica. Vibrações caóticas pagina 159, Exercicicio mapa de Henon
+ *
+ * Tema: Mapa de Henon na linguagem Java
+ * */
+ 
+public class HeronB
+{
+    // Constantes
+    public double a = 1.4;
+    public double b = 0.3;
+    // Métodos
+    public double k0(double x, double y)
+    {
+        return(1 - a*Math.pow(x,2) + y);
+    }
+    public double k1(double x)
+    {
+        return(b*x);
+    }
+    public void heron(double x0, double y0, int N)
+    {
+        double [] x = new double[N+2];
+        double [] y = new double[N+2];
+        // Inicialização com dados, ou conição iniciais.
+        x[0] = x0;
+        y[0] = y0;
+            for(int i = 0; i<=N; i++)
+            {
+                x[i+1] = k0(x[i], y[i]); // Poderiamos fazer da seguinte forma: 1 - a*Math.pow(x[i],2) + y[i]
+                y[i+1] = k1(x[i]);       // Poderiamos fazer da seguinte forma:  b*x[i]
+                // Saída
+                System.out.println("x["+i+"] = "+x[i] + " || y["+i+"] = " + y[i]);
+            }// fim do loop
+    }// fim
+}// fim da classe HeronB
