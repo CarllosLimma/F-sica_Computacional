@@ -1,0 +1,76 @@
+/*
+Autor: Carlos Eduardo da Silva Lima 
+Tema: Trabalho do Sanrerley - Integral de Riemman, Trapézio, Simpson 1/3 e Simpson 3/8
+Data: 19/04/2021
+ */
+using System;
+namespace IntegralTrabalho
+{
+    class Integral
+    {
+        public double f(double x)
+        {
+            return (x);
+        }
+        // Integral de Riemman
+        public void Riemman(double a, double b, int N)
+        {
+            double dx = ((b - a) / N);
+            double soma = 0;
+            for (int i = 0; i < N; i++)
+            {
+                double xi = a + i * dx;
+                soma += f(xi) * dx;
+            }
+            double integral = soma;
+            Console.WriteLine("Integral = "+integral+" - Riemman");
+        }
+        // Integral de Trapézio
+        public void Trapezio(double a, double b, int N)
+        {
+            double h = ((b - a) / N);
+            double x = a + h;
+            double soma = 0;
+            for (int i = 0; i < N; i++)
+            {
+                soma += f(x);
+                x += h;
+            }
+            double integral = h * (((f(a) + f(b))/2) + soma);
+            Console.WriteLine("Integral = " + integral + " - Trapezio");
+        }
+        // Integral de 1/3 de Simpson
+        public void Simpson13(double a, double b, int N)
+        {
+            double h = ((b - a) / N);
+            double xi0 = f(a) + f(b);
+            double xi1 = 0;
+            double xi2 = 0;
+            for (int i = 0; i < N; i++)
+            {
+                double x = a + i * h;
+                if (i%2==0)
+                {
+                    xi2 += f(x); // Par
+                }
+                else {
+                    xi1 += f(x); // Inpar
+                }
+            }
+            double integral = (h/3)*(xi0 + 2*xi2 + 4*xi1);
+            Console.WriteLine("Integral = " + integral + " - 1/3 Simpson");
+        }// Fim
+    }// Fim da classe 
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            //Objeto
+            Integral solucao = new Integral();
+            // Chamada de método
+            solucao.Riemman(0, 1, 1000); // Integral de Riemman 
+            solucao.Trapezio(0, 1, 1000); // Integral de Trapézio
+            solucao.Simpson13(0, 1, 1000); // Integral de 1/3 Simpson
+        }
+    }// fim da classe 
+}// Fim o namespace
