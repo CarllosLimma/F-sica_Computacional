@@ -1,0 +1,47 @@
+/*
+Autor: Carlos Eduaro da Silva Lima
+Tema: Método de Newto-Rapshon
+Idioma: Scilab
+Fecha: 29/03/21
+*/
+disp('Método de Newton-Rapshon')
+/************************ Código ********************************/
+//Función
+function [y] = f(x)
+    // Ingrese la expresión de la función Ej: y = x
+    y = x^(x) - 100;
+endfunction
+//Función derivada - Inserte la derivada de la función asumida anteriormente
+function [k] = df(x)
+   // Ingrese la expresión de la función Ej: y = x
+   k = (x^(x))*(log(x) + 1);
+endfunction
+// AAplicação do algoritmo de Newton-Rapshon
+// Entre com os dados via teclado
+p0  = input("Introduzca un tiro inicial para la raíz:");
+TOL = input("Ingrese tolerancia:");
+N0  = input("Ingrese el número de interacciones:");
+// Interacciones
+i = 1
+  while i<=N0
+      s = f(p0)/df(p0);
+       p = p0 - s;
+       /*
+       Podría ser ---> p = p - s;
+       */
+   if abs(p-p0)<TOL then
+     printf("p = %f\n",p);
+     break;
+   end
+   i = i +1;
+   p0 = p;
+   printf("p = %f\n",p);
+   end
+  disp('Raíz = p');
+  // Trazando la gráfica de la función f (x)
+   for i = 0:0.01:5
+   gaf = f(i);
+   plot(i,gaf,'-*')
+   xtitle("Gráfico");
+   xgrid(0.05);
+    end
